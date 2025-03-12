@@ -12,6 +12,8 @@ Toon aan dat je in staat bent om een Django-webapplicatie op te zetten in combin
 - Run `docker compose exec web python manage.py migrate`
 - Run `docker compose restart`
 
+De applicatie moet nu beschikbaar zijn op de volgende url:
+[http://localhost:8000/status](http://localhost:8000/status)
 
 ### 2. Applicatiestructuur
 - Maak in de geoapi app een model dat geolocatiegegevens opslaat, bestaande uit de volgende velden:

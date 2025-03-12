@@ -23,8 +23,8 @@ RUN apt update && apt install --no-install-recommends -y \
 COPY --from=builder /usr/local/bin/ /usr/local/bin/
 COPY --from=builder /usr/local/lib/python3.11/site-packages/ /usr/local/lib/python3.11/site-packages/
 
-WORKDIR /code
-COPY . /code
+WORKDIR /app
+COPY . ./
 
 ENV DJANGO_SETTINGS_MODULE=assessment.settings DJANGO_DEBUG=true STATIC_DIR=/static
 RUN python manage.py collectstatic --noinput
