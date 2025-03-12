@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgis/postgis:14-3.2
+    restart: always
+    user: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: assessment_db
+      POSTGRES_USER: assessment
+      POSTGRES_PASSWORD: insecure
+    command: ["postgres", "-c", "log_statement=all"]
+  web:
+    build:
+      context: ./src/
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "${DATABASE_URL:-postgresql://assessment:insecure@db/assessment_db}"
+
+volumes:
+  postgres_data:
