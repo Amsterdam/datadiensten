@@ -65,40 +65,88 @@ class DistanceFilter(FilterSet):
 
 class GeoLocationViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows GeoLocations to be viewed or created.
+ 
+    ## Endpoints
     
-    This ViewSet fulfills the core assessment requirements:
-    1. POST API endpoint for submitting geolocation data
-    2. GET API endpoint for retrieving stored geolocations with filtering
-    3. Validation of location data
-    4. Use of GeoDjango for spatial queries
+    ### GET /api/locations/
     
-    POST data formats:
+    Returns a list of all stored geolocations.
+    
+    **Query Parameters:**
+    
+    * `lat` - Latitude of center point for distance filtering
+    * `lng` - Longitude of center point for distance filtering
+    * `distance` - Distance in meters from center point
+    * `user` - Filter by user ID
+    * `ordering` - Field to order by (prefix with `-` for descending)
+    
+    **Examples:**
+    
+    ```
+    GET /api/locations/?lat=52.3740&lng=4.8897&distance=5000
+    ```
+    Returns all locations within 5km of Amsterdam center, ordered by proximity.
+    
+    ```
+    GET /api/locations/?user=1
+    ```
+    Returns all locations for user with ID 1.
+    
+    ```
+    GET /api/locations/?ordering=-timestamp
+    ```
+    Returns all locations ordered by timestamp (newest first).
+    
+    ### GET /api/locations/{id}/
+    
+    Retrieves a single geolocation by ID.
+    
+    ### POST /api/locations/
+    
+    Creates a new geolocation record.
+    
+    **Request Body:**
     
     JSON format:
+
+    ```
     {
-      "coordinates": [longitude, latitude],
+      "coordinates": [longitude, latitude],  
       "timestamp": "2024-03-18T12:00:00Z"  # Optional, will default to current time
     }
+    ```
     
     HTML form format:
+
+    ```
+    longitude: 4.8897  
+    latitude: 52.3740  
+    timestamp: 2024-03-18T12:00:00Z  # Optional
+    ```
+    
+    **Response:**
+    
+    ```
     {
-      "longitude": 4.8897,
-      "latitude": 52.3740,
-      "timestamp": "2024-03-18T12:00:00Z"  # Optional, will default to current time
+      "id": 1,  
+      "coordinates": [4.8897, 52.3740],  
+      "timestamp": "2024-03-18T12:00:00Z",  
+      "user": null  
     }
+    ```
     
-    GET parameters for filtering:
-    - lat: Latitude of the center point
-    - lng: Longitude of the center point
-    - distance: Distance in meters
-    - user: Filter by user ID
     
-    Examples: 
-    - /api/locations/?lat=52.3740&lng=4.8897&distance=5000
-      This will return all locations within 5km of Amsterdam center, ordered by proximity.
-    - /api/locations/?user=1
-      This will return all locations for user with ID 1.
+    ## Data Validation
+    
+    * Latitude must be between -90 and 90
+    * Longitude must be between -180 and 180
+    * Timestamp must be a valid ISO format datetime
+    
+    ## Authentication
+    
+    * Reading locations is allowed for all users
+    * Creating, updating and deleting locations is allowed for all users
+    * Authenticated users will have their locations associated with their user account
     """
     queryset = GeoLocation.objects.all().order_by('-timestamp')
     serializer_class = GeoLocationSerializer
@@ -148,7 +196,3 @@ class GeoLocationViewSet(viewsets.ModelViewSet):
                 {'error': f'An error occurred: {str(e)}'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-# Note: The assessment requirement for dynamically creating views based on data models
-# would require additional implementation, possibly using a factory pattern or
-# configuration-based view generation approach.
-
