@@ -20,10 +20,11 @@ class DistanceFilter(FilterSet):
     lat = filters.NumberFilter(method='filter_by_distance', label='Latitude')
     lng = filters.NumberFilter(method='filter_by_distance', label='Longitude')
     distance = filters.NumberFilter(method='filter_by_distance', label='Distance in meters')
+    user = filters.NumberFilter(field_name='user__id', label='User ID')
     
     class Meta:
         model = GeoLocation
-        fields = ['lat', 'lng', 'distance']
+        fields = ['lat', 'lng', 'distance', 'user']
     
     def filter_by_distance(self, queryset, name, value):
         """
@@ -66,13 +67,17 @@ class GeoLocationViewSet(viewsets.ModelViewSet):
       "timestamp": "2024-03-18T12:00:00Z"  # Optional, will default to current time
     }
     
-    GET parameters for distance filtering:
+    GET parameters for filtering:
     - lat: Latitude of the center point
     - lng: Longitude of the center point
     - distance: Distance in meters
+    - user: Filter by user ID
     
-    Example: /api/locations/?lat=52.3740&lng=4.8897&distance=5000
-    This will return all locations within 5km of Amsterdam center, ordered by proximity.
+    Examples: 
+    - /api/locations/?lat=52.3740&lng=4.8897&distance=5000
+      This will return all locations within 5km of Amsterdam center, ordered by proximity.
+    - /api/locations/?user=1
+      This will return all locations for user with ID 1.
     """
     queryset = GeoLocation.objects.all().order_by('-timestamp')
     serializer_class = GeoLocationSerializer
@@ -82,6 +87,16 @@ class GeoLocationViewSet(viewsets.ModelViewSet):
 
     # Allow any user to create a GeoLocation
     permission_classes = [AllowAny]
+    
+    def perform_create(self, serializer):
+        """
+        Set the user to the authenticated user by default when creating a GeoLocation.
+        If the user is not authenticated, the user field remains null.
+        """
+        if self.request.user.is_authenticated:
+            serializer.save(user=self.request.user)
+        else:
+            serializer.save()
 
     def create(self, request, *args, **kwargs):
         """

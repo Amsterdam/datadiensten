@@ -1,5 +1,6 @@
 from django.contrib.gis.db import models
 from django.utils import timezone
+from django.conf import settings
 
 class GeoLocation(models.Model):
     """
@@ -14,6 +15,13 @@ class GeoLocation(models.Model):
     timestamp = models.DateTimeField(
         default=timezone.now,
         help_text="When this location was recorded"
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        help_text="User who reported this location"
     )
 
     # class Meta:

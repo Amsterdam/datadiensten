@@ -3,6 +3,16 @@ from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from django.contrib.gis.geos import Point, GEOSGeometry, GEOSException
 from .models import GeoLocation
 from django.utils import timezone
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class UserSerializer(serializers.ModelSerializer):
+    """Serializer for the User model"""
+    class Meta:
+        model = User
+        fields = ('id', 'username')
+        read_only_fields = fields
 
 class GeoLocationSerializer(serializers.ModelSerializer):
     """
@@ -34,11 +44,12 @@ class GeoLocationSerializer(serializers.ModelSerializer):
     latitude = serializers.FloatField(required=False, write_only=True)
     
     distance = serializers.SerializerMethodField(read_only=True)
+    user = UserSerializer(read_only=True)
     
     class Meta:
         model = GeoLocation
-        fields = ('id', 'coordinates', 'longitude', 'latitude', 'timestamp', 'distance')
-        read_only_fields = ('id', 'distance')
+        fields = ('id', 'coordinates', 'longitude', 'latitude', 'timestamp', 'distance', 'user')
+        read_only_fields = ('id', 'distance', 'user')
     
     def get_distance(self, obj):
         """Return distance in meters if available"""
@@ -100,10 +111,14 @@ class GeoLocationSerializer(serializers.ModelSerializer):
         # Set the timestamp if provided, otherwise it will use the default
         timestamp = validated_data.get('timestamp', timezone.now())
         
+        # Get user from validated_data if provided by perform_create
+        user = validated_data.get('user', None)
+        
         # Create and return the GeoLocation instance
         return GeoLocation.objects.create(
             location=point,
-            timestamp=timestamp
+            timestamp=timestamp,
+            user=user
         )
     
     def to_representation(self, instance):
