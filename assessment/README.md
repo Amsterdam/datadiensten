@@ -95,3 +95,7 @@ Ik heb GeoDjango's ruimtelijke functies en database-extensies gebruikt voor effi
 Om unittests uit te voeren, voer
 
 `docker compose exec web python manage.py test assessment/geoapi`
+
+## Format and lint 
+
+`docker compose exec web black . --exclude=migrations`

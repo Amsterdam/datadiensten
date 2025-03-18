@@ -96,3 +96,7 @@ I used GeoDjango's spatial functions and database extensions for efficient geogr
 To run unit tests run 
 
 `docker compose exec web python manage.py test assessment/geoapi`
+
+## Format and lint 
+
+`docker compose exec web black . --exclude=migrations`
