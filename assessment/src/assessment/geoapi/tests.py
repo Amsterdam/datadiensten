@@ -3,11 +3,14 @@ from django.urls import reverse
 from django.contrib.gis.geos import Point
 from django.utils import timezone
 from rest_framework import status
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 from .models import GeoLocation
 import json
 from datetime import datetime, timedelta
 from django.utils.timezone import make_aware
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class GeoLocationViewSetTests(APITestCase):
@@ -167,3 +170,151 @@ class GeoLocationViewSetTests(APITestCase):
         
         # First should be Utrecht (newest)
         self.assertEqual(response.data['results'][0]['id'], self.utrecht_loc.id)
+
+
+class GeoLocationAPIUserTests(APITestCase):
+    """Test cases for user functionality in GeoLocation API"""
+
+    def setUp(self):
+        """Set up test data for GeoLocation API tests with users"""
+        # Clear any existing data to ensure a clean test environment
+        GeoLocation.objects.all().delete()
+        User.objects.filter(username__in=['user1', 'user2']).delete()
+        
+        # Set up API client
+        self.client = APIClient()
+        
+        # Create test users
+        self.user1 = User.objects.create_user(
+            username='user1',
+            password='password1',
+            email='user1@example.com'
+        )
+        self.user2 = User.objects.create_user(
+            username='user2',
+            password='password2',
+            email='user2@example.com'
+        )
+        
+        # Create test locations with different timestamps
+        # Amsterdam coordinates
+        point1 = Point(4.8897, 52.3740, srid=4326)
+        # Rotterdam coordinates
+        point2 = Point(4.4777, 51.9244, srid=4326)
+        # Utrecht coordinates
+        point3 = Point(5.1214, 52.0924, srid=4326)
+        
+        # Create locations with different timestamps and users
+        self.location1 = GeoLocation.objects.create(
+            location=point1,
+            user=self.user1,
+            timestamp=make_aware(datetime.now() - timedelta(days=2))
+        )
+        self.location2 = GeoLocation.objects.create(
+            location=point2,
+            user=self.user1,
+            timestamp=make_aware(datetime.now() - timedelta(days=1))
+        )
+        self.location3 = GeoLocation.objects.create(
+            location=point3,
+            user=self.user2,
+            timestamp=make_aware(datetime.now())
+        )
+        
+        # URLs for the GeoLocation API
+        self.list_url = reverse('location-list')
+        self.detail_url1 = reverse('location-detail', args=[self.location1.id])
+        self.detail_url2 = reverse('location-detail', args=[self.location2.id])
+        self.detail_url3 = reverse('location-detail', args=[self.location3.id])
+
+    def test_filter_by_user(self):
+        """Test filtering GeoLocations by user"""
+        # First, verify the total count
+        total_locations = GeoLocation.objects.count()
+        self.assertEqual(total_locations, 3, "Setup should create exactly 3 GeoLocation objects")
+        
+        # Check filtering for user1
+        response = self.client.get(f"{self.list_url}?user={self.user1.id}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        # Extract results, handling pagination if present
+        results = response.data['results'] if 'results' in response.data else response.data
+            
+        # Verify user1 has exactly 2 locations
+        user1_locations = [loc for loc in results if loc.get('user') and loc['user']['id'] == self.user1.id]
+        self.assertEqual(len(user1_locations), 2, f"User1 should have 2 locations, found {len(user1_locations)}")
+        
+        # Check filtering for user2
+        response = self.client.get(f"{self.list_url}?user={self.user2.id}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        # Extract results, handling pagination if present
+        results = response.data['results'] if 'results' in response.data else response.data
+            
+        # Verify user2 has exactly 1 location
+        user2_locations = [loc for loc in results if loc.get('user') and loc['user']['id'] == self.user2.id]
+        self.assertEqual(len(user2_locations), 1, f"User2 should have 1 location, found {len(user2_locations)}")
+
+    def test_auto_assign_user_when_authenticated(self):
+        """Test that user is automatically assigned when authenticated"""
+        # Authenticate as user1
+        self.client.force_authenticate(user=self.user1)
+        
+        # Create new location data (Eindhoven)
+        data = {'coordinates': [5.2913, 51.6991]}
+        response = self.client.post(self.list_url, data, format='json')
+        
+        # Check response is successful
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        
+        # Verify user was assigned
+        created_id = response.data['id']
+        geolocation = GeoLocation.objects.get(id=created_id)
+        self.assertEqual(geolocation.user, self.user1)
+        
+        # Validate other fields were set correctly
+        self.assertEqual(geolocation.location.x, 5.2913)
+        self.assertEqual(geolocation.location.y, 51.6991)
+        self.assertIsNotNone(geolocation.timestamp)
+
+    def test_no_user_when_not_authenticated(self):
+        """Test that no user is assigned when not authenticated"""
+        # Ensure not authenticated
+        self.client.force_authenticate(user=None)
+        
+        # Create new location data (Eindhoven)
+        data = {'coordinates': [5.2913, 51.6991]}
+        response = self.client.post(self.list_url, data, format='json')
+        
+        # Check response is successful
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        
+        # Verify no user was assigned
+        created_id = response.data['id']
+        geolocation = GeoLocation.objects.get(id=created_id)
+        self.assertIsNone(geolocation.user)
+        
+        # Validate other fields were set correctly
+        self.assertEqual(geolocation.location.x, 5.2913)
+        self.assertEqual(geolocation.location.y, 51.6991)
+        self.assertIsNotNone(geolocation.timestamp)
+
+    def test_user_in_response(self):
+        """Test that user information is included in the response"""
+        # Get detail for location1 (user1)
+        response = self.client.get(self.detail_url1)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        # Verify user information is included and correct
+        self.assertIn('user', response.data)
+        self.assertEqual(response.data['user']['id'], self.user1.id)
+        self.assertEqual(response.data['user']['username'], 'user1')
+        
+        # Get detail for location3 (user2)
+        response = self.client.get(self.detail_url3)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        # Verify user information is included and correct
+        self.assertIn('user', response.data)
+        self.assertEqual(response.data['user']['id'], self.user2.id)
+        self.assertEqual(response.data['user']['username'], 'user2')
