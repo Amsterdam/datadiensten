@@ -31,6 +31,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'assessment.geoapi',
+    
+    'django.contrib.gis',  # Required for GeoDjango
+    'rest_framework_gis',  # Required for GeoJSON serialization
 ]
 
 MIDDLEWARE = [
