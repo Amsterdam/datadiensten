@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     
     'django.contrib.gis',  # Required for GeoDjango
     'rest_framework_gis',  # Required for GeoJSON serialization
+    'django_filters',  # Required for filtering
 ]
 
 MIDDLEWARE = [
@@ -79,7 +80,12 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
 }
 
 # Password validation
