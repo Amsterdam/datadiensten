@@ -8,7 +8,7 @@ router = DefaultRouter()
 # This fulfills the assessment requirements for:
 # 1. A POST API endpoint for submitting geolocation data
 # 2. A GET API endpoint for retrieving stored geolocations with filtering
-router.register(r'locations', views.GeoLocationViewSet, basename='location')
+router.register(r"locations", views.GeoLocationViewSet, basename="location")
 
 # The API URLs are determined automatically by the router
 # This creates endpoints like:
@@ -16,5 +16,5 @@ router.register(r'locations', views.GeoLocationViewSet, basename='location')
 # - /locations/<id>/ (GET - retrieve a specific location, PUT/PATCH - update, DELETE - remove)
 # - /locations/?lat=52.3740&lng=4.8897&distance=5000 (GET - filtered by distance)
 urlpatterns = [
-    path('', include(router.urls)),
-] 
+    path("", include(router.urls)),
+]
