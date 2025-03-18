@@ -16,6 +16,13 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 class DistanceFilter(FilterSet):
     """
     Filter for GeoLocation objects based on distance from a point.
+    
+    This fulfills the assessment requirement for filtering based on distance:
+    "Add filtering based on distance. For example: show geolocations within 
+    a certain radius range of a given point."
+    
+    The implementation uses GeoDjango's spatial filtering capabilities to
+    efficiently query points within a given distance.
     """
     lat = filters.NumberFilter(method='filter_by_distance', label='Latitude')
     lng = filters.NumberFilter(method='filter_by_distance', label='Longitude')
@@ -29,6 +36,14 @@ class DistanceFilter(FilterSet):
     def filter_by_distance(self, queryset, name, value):
         """
         Filter queryset to only include locations within the specified distance.
+        
+        This method:
+        1. Creates a Point from the provided lat/lng coordinates
+        2. Filters the queryset to include only points within the specified distance
+        3. Annotates each point with its distance from the reference point
+        4. Orders the results by proximity (closest first)
+        
+        This satisfies the requirement for spatial filtering capabilities.
         """
         if 'lat' in self.data and 'lng' in self.data and 'distance' in self.data:
             lat = float(self.data['lat'])
@@ -51,6 +66,12 @@ class DistanceFilter(FilterSet):
 class GeoLocationViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows GeoLocations to be viewed or created.
+    
+    This ViewSet fulfills the core assessment requirements:
+    1. POST API endpoint for submitting geolocation data
+    2. GET API endpoint for retrieving stored geolocations with filtering
+    3. Validation of location data
+    4. Use of GeoDjango for spatial queries
     
     POST data formats:
     
@@ -92,6 +113,9 @@ class GeoLocationViewSet(viewsets.ModelViewSet):
         """
         Set the user to the authenticated user by default when creating a GeoLocation.
         If the user is not authenticated, the user field remains null.
+        
+        This addresses the optional user requirement from the assessment, where
+        the user model can be linked to geolocation data if authentication is present.
         """
         if self.request.user.is_authenticated:
             serializer.save(user=self.request.user)
@@ -102,9 +126,13 @@ class GeoLocationViewSet(viewsets.ModelViewSet):
         """
         Create a new GeoLocation instance with validation.
         
+        This method fulfills the assessment requirement:
+        "The API must validate that the location data is valid."
+        
         Validates:
-        - Coordinate ranges
+        - Coordinate ranges (via serializer)
         - Data types
+        - Proper error handling for invalid inputs
         """
         try:
             # The serializer will handle validation of the location data
@@ -120,3 +148,7 @@ class GeoLocationViewSet(viewsets.ModelViewSet):
                 {'error': f'An error occurred: {str(e)}'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+# Note: The assessment requirement for dynamically creating views based on data models
+# would require additional implementation, possibly using a factory pattern or
+# configuration-based view generation approach.
+

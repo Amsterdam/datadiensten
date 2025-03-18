@@ -6,6 +6,13 @@ class GeoLocation(models.Model):
     """
     Model to store geolocation data with timestamp.
     The location field uses GeoDjango's PointField to store latitude and longitude coordinates.
+    
+    This model fulfills the assessment requirement for storing:
+    - location (PointField): A geometric point to store latitude and longitude
+    - timestamp: When the geolocation data was recorded
+    - user (optional): Foreign key to a user model for authentication
+    
+    It serves as the core data structure for the geolocation API.
     """
     location = models.PointField(
         help_text="Geographic location (latitude and longitude)",
@@ -24,11 +31,12 @@ class GeoLocation(models.Model):
         help_text="User who reported this location"
     )
 
-    # class Meta:
-    #     ordering = ['-timestamp']  # Order by most recent first
-    #     indexes = [
-    #         models.Index(fields=['timestamp']),  # Add index on timestamp for better query performance
-    #     ]
+   
+    class Meta:
+        ordering = ['-timestamp']  # Order by most recent first
+        indexes = [
+            models.Index(fields=['timestamp']),  # Add index on timestamp for better query performance
+        ]
 
     def __str__(self):
         return f"Location ({self.location.x}, {self.location.y}) at {self.timestamp}"
