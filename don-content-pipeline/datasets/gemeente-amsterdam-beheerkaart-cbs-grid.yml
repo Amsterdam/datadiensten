@@ -1,0 +1,21 @@
+service_name: beheerkaart cbs grid
+description: Gegevens t.a.v. de lokale hoeveelheid te beheren publieke ruimte op basis
+  van de beheerkaart publieke ruimte en landelijk (BKT-)CBS-grid (vlakken 100x100m2
+  of 10x10m2).
+organization:
+  name: Gemeente Amsterdam
+  ooid: 25698
+api_type: rest_json
+api_authentication: none
+environments:
+- name: production
+  api_url: https://api.data.amsterdam.nl/v1/beheerkaart/cbs_grid
+  specification_url: https://api.data.amsterdam.nl/v1/beheerkaart/cbs_grid/openapi.json
+  documentation_url: https://api.data.amsterdam.nl/v1/docs/datasets/beheerkaart/cbs_grid.html
+contact:
+  email: dataplatform@amsterdam.nl
+  url: https://api.data.amsterdam.nl/api/
+terms_of_use:
+  government_only: false
+  pay_per_use: false
+  uptime_guarantee: 0

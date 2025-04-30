@@ -1,0 +1,21 @@
+service_name: brt 10
+description: De Basisregistratie Topografie (BRT) bevat de kleinschalige topografische
+  objecten. De TOP10NL is specifiek vervaardigd voor visualisaties op schalen rond
+  1:10.000.
+organization:
+  name: Gemeente Amsterdam
+  ooid: 25698
+api_type: rest_json
+api_authentication: none
+environments:
+- name: production
+  api_url: https://api.data.amsterdam.nl/v1/brt10
+  specification_url: https://api.data.amsterdam.nl/v1/brt10/openapi.json
+  documentation_url: https://api.data.amsterdam.nl/v1/docs/datasets/brt10.html
+contact:
+  email: dataplatform@amsterdam.nl
+  url: https://api.data.amsterdam.nl/api/
+terms_of_use:
+  government_only: false
+  pay_per_use: false
+  uptime_guarantee: 0

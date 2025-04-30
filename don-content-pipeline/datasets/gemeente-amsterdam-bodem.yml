@@ -1,0 +1,19 @@
+service_name: Bodemonderzoeken
+description: Informatie over onderzoeken naar asbest, grond en grondwater
+organization:
+  name: Gemeente Amsterdam
+  ooid: 25698
+api_type: rest_json
+api_authentication: none
+environments:
+- name: production
+  api_url: https://api.data.amsterdam.nl/v1/bodem
+  specification_url: https://api.data.amsterdam.nl/v1/bodem/openapi.json
+  documentation_url: https://api.data.amsterdam.nl/v1/docs/datasets/bodem.html
+contact:
+  email: dataplatform@amsterdam.nl
+  url: https://api.data.amsterdam.nl/api/
+terms_of_use:
+  government_only: false
+  pay_per_use: false
+  uptime_guarantee: 0

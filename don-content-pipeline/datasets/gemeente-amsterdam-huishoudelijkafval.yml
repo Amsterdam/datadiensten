@@ -1,0 +1,22 @@
+service_name: Afvalcontainers, putten en weeggegevens
+description: Alle locaties van afvalcontainers (ondergrondse afvalcontainers, bovengrondse
+  afvalcontainers en rolcontainers) en  betonputten van de Gemeente Amsterdam. De
+  locaties worden dagelijks bijgewerkt en bevatten de fracties Rest, Papier, Glas
+  en Textiel. Naast de objectinformatie zijn ook de weeggegevens beschikbaar.
+organization:
+  name: Gemeente Amsterdam
+  ooid: 25698
+api_type: rest_json
+api_authentication: none
+environments:
+- name: production
+  api_url: https://api.data.amsterdam.nl/v1/huishoudelijkafval
+  specification_url: https://api.data.amsterdam.nl/v1/huishoudelijkafval/openapi.json
+  documentation_url: https://api.data.amsterdam.nl/v1/docs/datasets/huishoudelijkafval.html
+contact:
+  email: dataplatform@amsterdam.nl
+  url: https://api.data.amsterdam.nl/api/
+terms_of_use:
+  government_only: false
+  pay_per_use: false
+  uptime_guarantee: 0
