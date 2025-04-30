@@ -1,0 +1,20 @@
+service_name: Ziekten, Plagen en Exoten Groen
+description: dataset met gegevens over ziekten, plagen en exoten in het groen in gemeente
+  Amsterdam
+organization:
+  name: Gemeente Amsterdam
+  ooid: 25698
+api_type: rest_json
+api_authentication: none
+environments:
+- name: production
+  api_url: https://api.data.amsterdam.nl/v1/ziekte_plagen_exoten_groen
+  specification_url: https://api.data.amsterdam.nl/v1/ziekte_plagen_exoten_groen/openapi.json
+  documentation_url: https://api.data.amsterdam.nl/v1/docs/datasets/ziekte_plagen_exoten_groen.html
+contact:
+  email: dataplatform@amsterdam.nl
+  url: https://api.data.amsterdam.nl/api/
+terms_of_use:
+  government_only: false
+  pay_per_use: false
+  uptime_guarantee: 0

@@ -1,0 +1,21 @@
+service_name: RDW
+description: De RDW is de organisatie die de registratie van gemotoriseerde voertuigen
+  en rijbewijzen in Nederland verzorgt. De RDW is een zelfstandig bestuursorgaan van
+  de Nederlandse overheid.
+organization:
+  name: Gemeente Amsterdam
+  ooid: 25698
+api_type: rest_json
+api_authentication: none
+environments:
+- name: production
+  api_url: https://api.data.amsterdam.nl/v1/rdw
+  specification_url: https://api.data.amsterdam.nl/v1/rdw/openapi.json
+  documentation_url: https://api.data.amsterdam.nl/v1/docs/datasets/rdw.html
+contact:
+  email: dataplatform@amsterdam.nl
+  url: https://api.data.amsterdam.nl/api/
+terms_of_use:
+  government_only: false
+  pay_per_use: false
+  uptime_guarantee: 0

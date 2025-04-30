@@ -1,0 +1,20 @@
+service_name: Datakwaliteit
+description: Dataset waarin de kwaliteit van de CMS(Container Management Systeem)
+  data is vastgelegd.
+organization:
+  name: Gemeente Amsterdam
+  ooid: 25698
+api_type: rest_json
+api_authentication: none
+environments:
+- name: production
+  api_url: https://api.data.amsterdam.nl/v1/datakwaliteit
+  specification_url: https://api.data.amsterdam.nl/v1/datakwaliteit/openapi.json
+  documentation_url: https://api.data.amsterdam.nl/v1/docs/datasets/datakwaliteit.html
+contact:
+  email: dataplatform@amsterdam.nl
+  url: https://api.data.amsterdam.nl/api/
+terms_of_use:
+  government_only: false
+  pay_per_use: false
+  uptime_guarantee: 0

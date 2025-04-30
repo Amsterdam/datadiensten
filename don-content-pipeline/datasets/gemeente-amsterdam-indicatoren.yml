@@ -1,0 +1,20 @@
+service_name: Indicatoren
+description: Met deze dataset worden de indicatoren gemeten voor het schoon, heel
+  en veilig houden van de Openbare Ruimte.
+organization:
+  name: Gemeente Amsterdam
+  ooid: 25698
+api_type: rest_json
+api_authentication: none
+environments:
+- name: production
+  api_url: https://api.data.amsterdam.nl/v1/indicatoren
+  specification_url: https://api.data.amsterdam.nl/v1/indicatoren/openapi.json
+  documentation_url: https://api.data.amsterdam.nl/v1/docs/datasets/indicatoren.html
+contact:
+  email: dataplatform@amsterdam.nl
+  url: https://api.data.amsterdam.nl/api/
+terms_of_use:
+  government_only: false
+  pay_per_use: false
+  uptime_guarantee: 0

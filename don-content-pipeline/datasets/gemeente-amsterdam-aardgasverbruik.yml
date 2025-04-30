@@ -1,0 +1,26 @@
+service_name: aardgasverbruik
+description: Data van Liander over Standaard Jaarverbruik (SJV) en aantal aansluitingen
+  per postcode-range in de MRA. Het standaard jaarverbruik is het verwachte jaarverbruik
+  voor gas op een aansluiting in een jaar met gemiddelde klimaatomstandigheden (standaardjaar).
+  O&S heeft statistieken over deze data gegenereerd. Het aardgasverbruik van (delen
+  van) enkele gemeentes in de MRA zit niet opgenomen in de gegevens van Liander, aangezien
+  Stedin daar de regionale netbeheerder is van het aardgasnetwerk (Aalsmeer, Amstelveen,
+  Beverwijk, Bloemendaal, Heemskerk, Heemstede, Ouder-Amstel, Uitgeest, Uithoorn en
+  Zandvoort).
+organization:
+  name: Gemeente Amsterdam
+  ooid: 25698
+api_type: rest_json
+api_authentication: none
+environments:
+- name: production
+  api_url: https://api.data.amsterdam.nl/v1/aardgasverbruik
+  specification_url: https://api.data.amsterdam.nl/v1/aardgasverbruik/openapi.json
+  documentation_url: https://api.data.amsterdam.nl/v1/docs/datasets/aardgasverbruik.html
+contact:
+  email: dataplatform@amsterdam.nl
+  url: https://api.data.amsterdam.nl/api/
+terms_of_use:
+  government_only: false
+  pay_per_use: false
+  uptime_guarantee: 0

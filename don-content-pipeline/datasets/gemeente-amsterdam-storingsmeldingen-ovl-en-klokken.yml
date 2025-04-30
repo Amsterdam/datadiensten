@@ -1,0 +1,20 @@
+service_name: Storingsmeldingen openbare verlichting en klokken
+description: De dataset bevat gegevens over de storingsmeldingen van openbare verlichting
+  en klokken van de Gemeente van Amsterdam.
+organization:
+  name: Gemeente Amsterdam
+  ooid: 25698
+api_type: rest_json
+api_authentication: none
+environments:
+- name: production
+  api_url: https://api.data.amsterdam.nl/v1/storingsmeldingen_ovl_en_klokken
+  specification_url: https://api.data.amsterdam.nl/v1/storingsmeldingen_ovl_en_klokken/openapi.json
+  documentation_url: https://api.data.amsterdam.nl/v1/docs/datasets/storingsmeldingen_ovl_en_klokken.html
+contact:
+  email: dataplatform@amsterdam.nl
+  url: https://api.data.amsterdam.nl/api/
+terms_of_use:
+  government_only: false
+  pay_per_use: false
+  uptime_guarantee: 0
